@@ -1,30 +1,33 @@
 
 # Bulk Certificate Generator API
 
-## Overview
-The Bulk Certificate Generator API is a Python-based backend application that generates PDF certificates for multiple recipients through a single API request. It validates recipient information, tracks job status, records individual certificate results, and supports downloading generated certificates.
+A Python-based REST API that generates PDF certificates for multiple recipients through a single request. The application validates recipient details, processes certificate generation, tracks job status, and provides endpoints to retrieve and download certificates.
 
 ## Features
-- Bulk certificate generation from one request
-- Recipient name and email validation
-- PDF certificate generation using ReportLab
-- Background processing of generation jobs
-- Job status and success/failure tracking
-- Individual certificate result retrieval
-- PDF certificate download
-- SQLite relational database storage
-- Automated API tests using pytest
 
-## Technologies Used
-- Python
-- FastAPI
-- SQLite
-- SQLAlchemy
-- ReportLab
-- Pydantic
-- Pytest
+- Generate certificates for multiple recipients in one API request.
+- Validate recipient names and email addresses.
+- Generate PDF certificates using a predefined template.
+- Track job status and certificate generation results.
+- Store job and recipient information in a relational database.
+- Handle individual certificate generation failures.
+- Retrieve certificate details and download generated PDFs.
+- Test API endpoints using automated tests.
+
+## Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Backend programming |
+| FastAPI | REST API development |
+| SQLite | Relational database |
+| SQLAlchemy | Database operations and ORM |
+| Pydantic | Request validation |
+| ReportLab | PDF certificate generation |
+| Pytest | Automated testing |
 
 ## Project Structure
+
 ```text
 bulk-certificate-generator/
 ├── app/
@@ -42,57 +45,77 @@ bulk-certificate-generator/
 └── .gitignore
 ```
 
-## Setup Instructions
+## Prerequisites
+
+- Python 3.10 or later
+- pip
+- Git
+
+## Installation and Setup
 
 ### 1. Clone the repository
+
+Replace `YOUR-USERNAME` with your GitHub username.
+
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
+git clone https://github.com/YOUR-USERNAME/bulk-certificate-generator.git
 cd bulk-certificate-generator
 ```
 
 ### 2. Create a virtual environment
+
 ```bash
 python -m venv venv
 ```
 
-### 3. Activate the virtual environment
+### 3. Activate the environment
 
-Windows Command Prompt:
+**Windows Command Prompt:**
+
 ```cmd
 venv\Scripts\activate
 ```
 
-Windows PowerShell:
+**Windows PowerShell:**
+
 ```powershell
 .\venv\Scripts\Activate.ps1
 ```
 
 ### 4. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Start the API
+### 5. Start the API server
+
 ```bash
 python -m uvicorn main:app --reload
 ```
 
-### 6. Open API documentation
-Visit:
+### 6. Open the API documentation
+
+Visit the following URL in your browser:
+
 http://127.0.0.1:8000/docs
+
+The Swagger UI page allows you to execute and test the API endpoints.
 
 ## API Endpoints
 
-| Method | Endpoint | Purpose |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/` | Welcome message |
-| GET | `/health` | Health check |
-| POST | `/api/v1/jobs` | Create a bulk certificate job |
-| GET | `/api/v1/jobs/{job_id}` | Check job status and progress |
-| GET | `/api/v1/jobs/{job_id}/certificates` | List certificates for a job |
-| GET | `/api/v1/certificates/{certificate_id}` | Download a generated PDF |
+| GET | `/` | Returns the welcome message |
+| GET | `/health` | Checks API health |
+| POST | `/api/v1/jobs` | Creates a bulk certificate generation job |
+| GET | `/api/v1/jobs/{job_id}` | Retrieves job status and counts |
+| GET | `/api/v1/jobs/{job_id}/certificates` | Lists certificates belonging to a job |
+| GET | `/api/v1/certificates/{certificate_id}` | Downloads an individual PDF certificate |
 
 ## Example Request
+
+Use `POST /api/v1/jobs` with the following JSON body:
 
 ```json
 {
@@ -111,30 +134,54 @@ http://127.0.0.1:8000/docs
 }
 ```
 
-## Run Tests
+A successful request returns a job ID and the total number of recipients submitted. Use the returned job ID to check the generation status and retrieve certificate records.
+
+## Running Automated Tests
+
+Run the tests from the project root:
 
 ```bash
 python -m pytest -v
 ```
 
+The test suite checks the health endpoint, bulk job creation, job status, certificate retrieval and download, invalid email validation, and handling of missing job IDs.
+
 ## Database Design
-The application uses two relational tables:
 
-- **Jobs:** Stores event details, certificate title, generation status, and success/failure counts.
-- **Certificates:** Stores recipient details, individual generation status, file path, and error messages.
+The application uses SQLite with two main tables.
 
-Each certificate record belongs to a job through a foreign key.
+### Jobs
+
+Stores the event name, certificate title, job status, total recipient count, successful generation count, failed generation count, and creation timestamp.
+
+### Certificates
+
+Stores each recipient's name, email address, generation status, PDF file path, error details, and associated job ID.
+
+A foreign key links each certificate record to its parent job.
 
 ## Design Decisions
-- FastAPI provides request validation and interactive API documentation.
-- SQLite provides a lightweight relational database suitable for local setup and demonstration.
-- SQLAlchemy manages database models and queries.
-- ReportLab generates PDF certificates.
-- Background tasks allow the API to return a job identifier before processing finishes.
-- Per-recipient error handling allows other certificates to be processed when one certificate fails.
 
-## Limitations
-This version uses in-process background tasks and local PDF storage. A production deployment would benefit from a dedicated task queue, persistent shared storage, authentication, and stronger job-recovery mechanisms.
+- **FastAPI:** Provides REST endpoints, request validation, and interactive documentation.
+- **SQLite:** Offers simple relational data storage for local development.
+- **SQLAlchemy:** Maps Python models to database tables and manages database queries.
+- **ReportLab:** Generates downloadable PDF certificates from a predefined layout.
+- **BackgroundTasks:** Allows certificate generation to run after a job request is accepted.
+- **Per-recipient error handling:** Records individual failures so one failed certificate does not automatically stop the remaining recipients.
+
+## Limitations and Future Improvements
+
+- Introduce a dedicated task queue for reliable background processing at larger scales.
+- Add authentication and authorization.
+- Support configurable certificate templates and branding.
+- Store generated PDFs in cloud storage for deployment across multiple servers.
+- Add pagination for large certificate lists.
+- Improve job recovery and monitoring for production use.
 
 ## License
-This project is intended for educational and assessment purposes.
+
+This project is licensed under the MIT License.
+
+## Author
+
+Divya Murugan
