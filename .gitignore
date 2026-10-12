@@ -1,0 +1,20 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environment
+venv/
+
+# Local database
+certificates.db
+*.db
+
+# Generated PDF certificates
+generated/
+
+# Environment variables
+.env
+
+# Editor settings
+.vscode/
